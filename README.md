@@ -16,7 +16,8 @@ if you want to help just fork it and drop me pull requests.
  * 	write php scripts to implement the basic functionality of json requests needed by the miui theme app
 
 
-
+* CHEATSHEET:
+ *	leech the thumbnails: "for i in `perl download_thumbnails.pl`; do mkdir `echo $i | cut -b 1,2,3` && wget http://file.market.xiaomi.com/thumbnail/jpeg/w232/$i -O $i; done"
 
 * INFO:
 
