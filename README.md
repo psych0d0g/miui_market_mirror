@@ -8,5 +8,9 @@ Scripts and tools to create a local mirror of the miui theme market
 This project is still under heavy development and far from complete.
 if you want to help just fork it and drop me pull requests.
 
+If you want to have a chat, or ask further questions, drop by on the project's irc-channel:
+
+irc://irc.freenode.net/miui-mm
+
 Greetings
 Cronix
