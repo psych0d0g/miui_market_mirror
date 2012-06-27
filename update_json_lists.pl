@@ -33,7 +33,7 @@ my $ua = LWP::UserAgent->new;
 $ua->timeout(10);
 $ua->env_proxy;
 
-my $dbh = DBI->connect('DBI:mysql:$mysql_db', $mysql_user, $mysql_pass
+my $dbh = DBI->connect("DBI:mysql:$mysql_db", $mysql_user, $mysql_pass
 	           ) || die "Could not connect to database: $DBI::errstr";
 
 foreach my $category ( @categorys ) {
