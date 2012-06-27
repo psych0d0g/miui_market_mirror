@@ -6,7 +6,7 @@ use DBI;
 
 require "config.pl";
 
-my $dbh = DBI->connect('DBI:mysql:$mysql_db", $mysql_user, $mysql_pass
+my $dbh = DBI->connect("DBI:mysql:$mysql_db", $mysql_user, $mysql_pass
 	           ) || die "Could not connect to database: $DBI::errstr";
 
 my $sth = $dbh->prepare('select id, frontCover from list')
