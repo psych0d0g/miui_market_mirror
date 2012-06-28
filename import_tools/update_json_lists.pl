@@ -5,9 +5,10 @@ use warnings;
 use LWP::UserAgent;
 use JSON;
 use DBI;
+use Config::Tiny;
 use Data::Dumper;
 
-require "config.pl";
+my $Config = Config::Tiny->read( 'config.cfg' ) or die "you must first create a config.cfg \nyou can use the config.dist.cfg as a starting point \n";
 
 my @categorys = (
 	"Compound",
@@ -30,7 +31,7 @@ my $ua = LWP::UserAgent->new;
 $ua->timeout(10);
 $ua->env_proxy;
 
-my $dbh = DBI->connect("DBI:mysql:$mysql_db", $mysql_user, $mysql_pass
+my $dbh = DBI->connect("DBI:mysql:$Config->{mysql}->{db}", $Config->{mysql}->{user}, $Config->{mysql}->{pass}
 	           ) || die "Could not connect to database: $DBI::errstr";
 
 foreach my $category ( @categorys ) {
