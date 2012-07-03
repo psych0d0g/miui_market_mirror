@@ -27,10 +27,11 @@ my @categorys = (
 	"RingtoneUnion",
 );
 
-my $i = 0;
+my $i = 200;
 
 my $ua = LWP::UserAgent->new;
-$ua->timeout(10);
+
+$ua->timeout(30);
 $ua->env_proxy;
 
 my $dbh = DBI->connect("DBI:mysql:$Config->{mysql}->{db}", $Config->{mysql}->{user}, $Config->{mysql}->{pass}
@@ -57,6 +58,7 @@ foreach my $category ( @categorys ) {
 				}
 			};
 			if (scalar(@{$json->{$category}})<=0) {
+				$i = 0;
 				last;
 			}
 		} else {
