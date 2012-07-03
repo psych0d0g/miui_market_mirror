@@ -7,8 +7,10 @@ use JSON;
 use DBI;
 use Config::Tiny;
 use Data::Dumper;
+use File::Basename;
+my $dirname = dirname(__FILE__);
 
-my $Config = Config::Tiny->read( 'config.cfg' ) or die "you must first create a config.cfg \nyou can use the config.dist.cfg as a starting point \n";
+my $Config = Config::Tiny->read( $dirname.'/config.cfg' ) or die "you must first create a config.cfg \nyou can use the config.dist.cfg as a starting point \n".Config::Tiny->errstr;
 
 my @categorys = (
 	"Compound",
@@ -41,9 +43,18 @@ foreach my $category ( @categorys ) {
 			my $json = decode_json $response->decoded_content;  # or whatever
 			$i++;
 			for my $item( @{$json->{$category}} ){
-				$dbh->do("INSERT INTO list (name, moduleId, fileSize, moduleType, assemblyId, frontCover, playTime)
-			  VALUES('$item->{name}','$item->{moduleId}','$item->{fileSize}','$item->{moduleType}','$item->{assemblyId}','$item->{frontCover}','$item->{playTime}')");
-				print $item->{frontCover} . "\n";
+				my $sth = $dbh->prepare("SELECT moduleType,frontCover FROM list WHERE moduleType='$item->{moduleType}' AND frontCover='$item->{frontCover}'");
+				$sth->execute();
+				my $dubl_check = $sth->fetchrow_hashref();
+				if ( defined $dubl_check->{frontCover} ) {
+					print "[". $i . "] Item Already imported into database, skipping...\n";
+				} else {
+					$dbh->do("INSERT INTO list (name, moduleId, fileSize, moduleType, assemblyId, frontCover, playTime)
+				   VALUES('$item->{name}','$item->{moduleId}','$item->{fileSize}','$item->{moduleType}','$item->{assemblyId}','$item->{frontCover}','$item->{playTime}')");
+					print "[" . $i . "]";
+					print $item->{frontCover} . " Imported as ";
+					print $item->{moduleType} . "\n";
+				}
 			};
 			if (scalar(@{$json->{$category}})<=0) {
 				last;

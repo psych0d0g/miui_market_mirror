@@ -4,8 +4,10 @@ use strict;
 use warnings;
 use Config::Tiny;
 use DBI;
+use File::Basename;
+my $dirname = dirname(__FILE__);
 
-my $Config = Config::Tiny->read( 'config.cfg' ) or die "you must first create a config.cfg \nyou can use the config.dist.cfg as a starting point \n";
+my $Config = Config::Tiny->read( $dirname.'/config.cfg' ) or die "you must first create a config.cfg \nyou can use the config.dist.cfg as a starting point \n".Config::Tiny->errstr;
 
 my $dbh = DBI->connect("DBI:mysql:$Config->{mysql}->{db}", $Config->{mysql}->{user}, $Config->{mysql}->{pass}
 	           ) || die "Could not connect to database: $DBI::errstr";
