@@ -12,7 +12,8 @@ if you want to help just fork it and drop me pull requests.
 * TODO:
  * 	reverse the json structures of the official MIUI market to extend the import script
  * 	reverse the Path's the theme apk needs to get all the data it wants
- * 	modify the import script to also act as a update script (jump to next category when the item already exists in database
+ * 	modify the import scripts to also act as a update script (jump to next category when the item already exists in database) [DONE]
+ *	extend the import scripts to also download the real resources and theme files
  * 	write php scripts to implement the basic functionality of json requests needed by the miui theme app
 
 
