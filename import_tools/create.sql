@@ -15,7 +15,7 @@ CREATE TABLE list (
 
 CREATE TABLE images(
 	id INT NOT NULL AUTO_INCREMENT,
-	assemblyId VARCHAR(36) NOT NULL,
+	moduleId VARCHAR(36) NOT NULL,
 	snapshotsUrl VARCHAR(44),
 	PRIMARY KEY ( id )
 );
