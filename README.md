@@ -24,12 +24,12 @@ if you want to help just fork it and drop me pull requests.
 
 URL's used in the unmodifyed miui-framework.jar which get patched to own server:
 
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v3, "http://market.xiaomi.com/thm/config/clazz/%s/zh-cn"
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v1, "http://market.xiaomi.com/thm/details/%s?"
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v1, "http://market.xiaomi.com/thm/download/%s?"
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v3, "http://market.xiaomi.com/thm/list?category=%s&sortby=%s&start=%s&count=%s"
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v3, "http://market.xiaomi.com/thm/search?category=%s&sortby=%s&start=%s&count=%s&keywords=%s"
-out/miui/app/resourcebrowser/service/online/OnlineService.smali:    const-string v3, "http://market.xiaomi.com/thm/checkupdate?fileshash=%s"
+"http://market.xiaomi.com/thm/config/clazz/%s/zh-cn" 						=> lists subcategories for wallpapers and Ringtones
+"http://market.xiaomi.com/thm/details/%s?" 							=> shows details and ressources of a single item
+"http://market.xiaomi.com/thm/download/%s?"							=> to be reversed, should do what i says
+"http://market.xiaomi.com/thm/list?category=%s&sortby=%s&start=%s&count=%s"			=> list items in a category
+"http://market.xiaomi.com/thm/search?category=%s&sortby=%s&start=%s&count=%s&keywords=%s"	=> Needs to be reversed, but should provide a search functionality
+"http://market.xiaomi.com/thm/checkupdate?fileshash=%s"						=> Update check? Does nothing for now
 
 
 If you want to have a chat, or ask further questions, drop by on the project's irc-channel:
