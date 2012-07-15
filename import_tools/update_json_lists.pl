@@ -50,7 +50,7 @@ my @categorys = (
 my $i = 0;
 
 # How many items to get each request (50 is hardlimit by xiaomi server)
-my $count = 10;
+my $count = 50;
 
 # Variable used for item numbering
 my $itemNum = 0;
@@ -70,6 +70,7 @@ my $dbh = DBI->connect("DBI:mysql:$Config->{mysql}->{db}", $Config->{mysql}->{us
 foreach my $category ( @categorys ) {
 	# Which we are working on this category loop forever until we come accross a defined breakpoint
         while ( 1 ) {
+                print "[ITEM-LIST] Fetching new JSON data from server...\n";
 		# prepare UserAgent handler to get the json stuff
                 my $response = $ua->get("http://market.xiaomi.com/thm/list?category=$category&sortby=New&start=$i&count=$count");
 		# only continue if we recive 200 / 302 or similar http header code
@@ -78,13 +79,17 @@ foreach my $category ( @categorys ) {
                         my $json = decode_json $response->decoded_content;  # or whatever
 			# Count the item numbers and give the item ID we are currently to our UserAgent handler so it can get the next item from xiaomi servers
                         $i = $i+$count;
+			# Loop through every single item recived in the JSON data
                         for my $item( @{$json->{$category}} ){
 				$itemNum++;
+				# prepare Mysql query which is used to check for data which already was importet effectively preventing dublicates in our local mysql database
                                 my $sth = $dbh->prepare("SELECT moduleType,frontCover FROM list WHERE moduleType='$item->{moduleType}' AND frontCover='$item->{frontCover}'");
                                 $sth->execute();
                                 my $dubl_check = $sth->fetchrow_hashref();
+				# if we already have this entry in our DB, do nothing but notify the user about it
                                 if ( defined $dubl_check->{frontCover} ) {
                                         print "[ITEM-LIST][". $itemNum . "][". $item->{assemblyId} ."] Item Already imported into database, skipping...\n";
+				# else import the item with all important values to our items table and tell the user about this aswell
                                 } else {
                                         $dbh->do("INSERT INTO list (name, moduleId, fileSize, moduleType, assemblyId, frontCover, playTime)
                                    VALUES('$item->{name}','$item->{moduleId}','$item->{fileSize}','$item->{moduleType}','$item->{assemblyId}','$item->{frontCover}','$item->{playTime}')");
@@ -92,6 +97,8 @@ foreach my $category ( @categorys ) {
                                         print $item->{frontCover} . " Imported as ";
                                         print $item->{moduleType} . "\n";
                                 }
+
+				# check for details and import them aswell but into a diffrent table [WORK IN PROGRESS]
                                 my $responseImage = $ua->get("http://market.xiaomi.com/thm/details/$item->{assemblyId}");
                                 if ($responseImage->is_success) {
                                         my $jsonImage = decode_json $responseImage->decoded_content;
@@ -99,16 +106,22 @@ foreach my $category ( @categorys ) {
                                 }
 
                         };
+			# If we get an empty json result we probably reached the end of available data for this category, so switch to the next and start from 0
                         if (scalar(@{$json->{$category}})<=0) {
                                 $i = 0;
+				$itemNum = 0;
+				print "[ITEM-LIST] Last json response was empty, assuming ". $category ." is completely in sync.\n";
+				print "[ITEM-LIST][". $category ."] Complete, Switching to next Category\n";
                                 last;
                         }
+		# Let the script die with an error code when the UserAgent response code indicates a failure in getting the JSON data
+		# also close the mysql connection
                 } else {
                         $dbh->disconnect();
                         die $response->status_line;
                 }
         }
 }
-
+# Close the mysql connection after we've imported everything
 $dbh->disconnect();
 
