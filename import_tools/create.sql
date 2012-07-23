@@ -1,16 +1,41 @@
 create database miui_market;
 use miui_market;
 
+CREATE TABLE details (
+	id INT NOT NULL AUTO_INCREMENT,
+	moduleId VARCHAR(36) NOT NULL,
+	author VARCHAR(255) DEFAULT NULL,
+	brief VARCHAR(255) DEFAULT NULL,
+	createTime INT(15) DEFAULT NULL,
+	modifyTime INT(15) DEFAULT NULL,
+	description TEXT DEFAULT NULL,
+	designer VARCHAR(255) DEFAULT NULL,
+	tags VARCHAR(255) DEFAULT NULL,
+	version VARCHAR(255) DEFAULT NULL,
+	PRIMARY KEY ( id )
+);
+
+CREATE TABLE ratings (
+	id INT NOT NULL AUTO_INCREMENT,
+	moduleID VARCHAR(36) NOT NULL,
+	oneStarCount INT(10) DEFAULT NULL,
+	twoStarCount INT(10) DEFAULT NULL,
+	threeStarCount INT(10) DEFAULT NULL,
+	fourStarCount INT(10) DEFAULT NULL,
+	fiveStarCount INT(10) DEFAULT NULL,
+	PRIMARY KEY ( id )
+);
+
 CREATE TABLE list (
-  id bigint(20) NOT NULL AUTO_INCREMENT,
-  name varchar(255) DEFAULT NULL,
-  moduleId varchar(255) DEFAULT NULL,
-  fileSize bigint(20) DEFAULT NULL,
-  moduleType varchar(255) DEFAULT NULL,
-  assemblyId varchar(255) DEFAULT NULL,
-  frontCover varchar(255) DEFAULT NULL,
-  playTime varchar(255) DEFAULT NULL,
-  PRIMARY KEY (id)
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(255) DEFAULT NULL,
+	moduleId VARCHAR(36) DEFAULT NULL,
+	fileSize INT(20) DEFAULT NULL,
+	moduleType VARCHAR(55) DEFAULT NULL,
+	assemblyId VARCHAR(36) DEFAULT NULL,
+	frontCover VARCHAR(44) DEFAULT NULL,
+	playTime VARCHAR(255) DEFAULT NULL,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE images(
