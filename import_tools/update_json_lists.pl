@@ -101,12 +101,10 @@ foreach my $category ( @categorys ) {
                                 } else {
                                         $dbh->do("INSERT INTO list (name, moduleId, fileSize, moduleType, assemblyId, frontCover, playTime)
                                    VALUES('$item->{name}','$item->{moduleId}','$item->{fileSize}','$item->{moduleType}','$item->{assemblyId}','$item->{frontCover}','$item->{playTime}')");
-                                        print "[ITEM-LIST][" . $itemNum . "]";
-                                        print $item->{frontCover} . " Imported as ";
-                                        print $item->{moduleType} . "\n";
+                                        print "[ITEM-LIST][" . $itemNum . "]" . $item->{frontCover} . " Imported as " . $item->{moduleType} . "\n";
                                 }
 
-				# check for details and import them aswell but into a diffrent table [WORK IN PROGRESS]
+				# check for details and import them aswell but into a diffrent table [WORK IN PROGRESS/COVER IMAGES DONE]
                                 my $responseImage = $ua->get("http://market.xiaomi.com/thm/details/$item->{moduleId}");
                                 if ($responseImage->is_success) {
                                         my $jsonImage = decode_json $responseImage->decoded_content;
@@ -121,9 +119,7 @@ foreach my $category ( @categorys ) {
                                 		# else import the item with all important values to our items table and tell the user about this aswell
                                 		} else {
 							$dbh->do("INSERT INTO images (moduleId, snapshotsUrl) VALUES('$mysqlRefId','$image')");
-		                                        print "[ITEM-IMAGE][" . $itemNum . "]";
-                		                        print $image . " Imported for Item ";
-                        		                print $mysqlRefId . "\n";
+		                                        print "[ITEM-IMAGE][" . $itemNum . "]" . $image . " Imported for Item " . $mysqlRefId . "\n";
 						}
 
 					}
