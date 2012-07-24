@@ -105,12 +105,11 @@ foreach my $category ( @categorys ) {
                                 }
 
 				# check for details and import them aswell but into a diffrent table [WORK IN PROGRESS/COVER IMAGES DONE]
-                                my $responseImage = $ua->get("http://market.xiaomi.com/thm/details/$item->{moduleId}");
-                                if ($responseImage->is_success) {
-                                        my $jsonImage = decode_json $responseImage->decoded_content;
-					my $mysqlRefId = $jsonImage->{"moduleId"};
-                                	for my $image( @{$jsonImage->{"snapshotsUrl"}} ){
-						my $sth2 = $dbh->prepare("SELECT moduleId,snapshotsUrl FROM images WHERE moduleId='$mysqlRefId' AND snapshotsUrl='$image'");
+                                my $responseDetails = $ua->get("http://market.xiaomi.com/thm/details/$item->{moduleId}");
+                                if ($responseDetails->is_success) {
+                                        my $jsonDetails = decode_json $responseDetails->decoded_content;
+                                	for my $image( @{$jsonDetails->{"snapshotsUrl"}} ){
+						my $sth2 = $dbh->prepare("SELECT moduleId,snapshotsUrl FROM images WHERE moduleId='$jsonDetails->{moduleId}' AND snapshotsUrl='$image'");
 						$sth2->execute();
 						my $dubl_check_Images = $sth2->fetchrow_hashref();
 						# if we already have this entry in our DB, do nothing but notify the user about it
@@ -118,13 +117,24 @@ foreach my $category ( @categorys ) {
                                 		        print "[ITEM-IMAGE][". $itemNum . "][". $image ."] Image Already imported into database, skipping...\n";
                                 		# else import the item with all important values to our items table and tell the user about this aswell
                                 		} else {
-							$dbh->do("INSERT INTO images (moduleId, snapshotsUrl) VALUES('$mysqlRefId','$image')");
-		                                        print "[ITEM-IMAGE][" . $itemNum . "]" . $image . " Imported for Item " . $mysqlRefId . "\n";
+							$dbh->do("INSERT INTO images (moduleId, snapshotsUrl) VALUES('$jsonDetails->{moduleId}','$image')");
+		                                        print "[ITEM-IMAGE][" . $itemNum . "]" . $image . " Imported for Item " . $jsonDetails->{moduleId} . "\n";
 						}
 
 					}
-                                }
-
+					my $sth3 = $dbh->prepare("SELECT moduleId FROM details WHERE moduleId='$jsonDetails->{moduleId}'");
+					$sth3->execute();
+					my $dubl_check_Details = $sth3->fetchrow_hashref();
+					# if we already have this entry in our DB, do nothing but notify the user about it
+                        		if ( defined $dubl_check_Details->{moduleId} ) {
+                                	        print "[ITEM-DETAILS][". $itemNum . "][". $jsonDetails->{moduleId} ."] Details Already imported into database, skipping...\n";
+                                	# else import the item with all important values to our items table and tell the user about this aswell
+                                	} else {
+						$dbh->do("INSERT INTO details (moduleId, author, brief, createTime, modifyTime, description, designer, tags, version) 
+							  VALUES('$jsonDetails->{moduleId}','AddSlashes($jsonDetails->{author})','AddSlashes($jsonDetails->{brief})','$jsonDetails->{createTime}','$jsonDetails->{modifyTime}','AddSlashes($jsonDetails->{description})','AddSlashes($jsonDetails->{designer})','AddSlashes($jsonDetails->{tags})','$jsonDetails->{verison}')");
+		                                print "[ITEM-DETAILS][" . $itemNum . "]" . $jsonDetails->{moduleId} . " Imported\n";
+					}					
+				}
                         };
 			# If we get an empty json result we probably reached the end of available data for this category, so switch to the next and start from 0
                         if (scalar(@{$json->{$category}})<=0) {
@@ -145,3 +155,12 @@ foreach my $category ( @categorys ) {
 # Close the mysql connection after we've imported everything
 $dbh->disconnect();
 
+sub AddSlashes {
+    my $text = shift;
+    ## Make sure to do the backslash first!
+    $text =~ s/\\/\\\\/g;
+    $text =~ s/'/\\'/g;
+    $text =~ s/"/\\"/g;
+    $text =~ s/\\0/\\\\0/g;
+    return $text;
+}
