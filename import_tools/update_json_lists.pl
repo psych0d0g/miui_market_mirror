@@ -120,12 +120,11 @@ foreach my $category ( @categorys ) {
 							$dbh->do("INSERT INTO images (moduleId, snapshotsUrl) VALUES('$jsonDetails->{moduleId}','$image')");
 		                                        print "[ITEM-IMAGE][" . $itemNum . "]" . $image . " Imported for Item " . $jsonDetails->{moduleId} . "\n";
 						}
-
 					}
 					my $sth3 = $dbh->prepare("SELECT moduleId FROM details WHERE moduleId='$jsonDetails->{moduleId}'");
 					$sth3->execute();
 					my $dubl_check_Details = $sth3->fetchrow_hashref();
-					# if we already have this entry in our DB, do nothing but notify the user about it
+					# if we already have this entry in our DB, do nothing but cdnotify the user about it
                         		if ( defined $dubl_check_Details->{moduleId} ) {
                                 	        print "[ITEM-DETAILS][". $itemNum . "][". $jsonDetails->{moduleId} ."] Details Already imported into database, skipping...\n";
                                 	# else import the item with all important values to our items table and tell the user about this aswell
