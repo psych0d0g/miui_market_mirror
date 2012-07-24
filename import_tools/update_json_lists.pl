@@ -21,7 +21,6 @@ use LWP::UserAgent;
 use JSON;
 use DBI;
 use Config::Tiny;
-use Data::Dumper;
 use File::Basename;
 
 # Initialization of some basic stuff
